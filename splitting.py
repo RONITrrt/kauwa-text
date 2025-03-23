@@ -8,7 +8,12 @@ def extract_claims(text):
     claims = []
 
     for sent in doc.sents:
-        if any(keyword in sent.text.lower() for keyword in ["claims", "reportedly", "alleges", "stated", "confirmed", "asserts", "suggests"]):
+        # Look for statements with key indicators of claims
+        if any(keyword in sent.text.lower() for keyword in ["suggests", "believes", "states", "argues", "warns", "reports", "announces", "remarks", "concerns", "finds", "reveals", "predicts"]):
+            claims.append(sent.text.strip())
+
+        # Capture sentences with named entities (Experts, Organizations)
+        elif any(ent.label_ in ["PERSON", "ORG"] for ent in sent.ents):
             claims.append(sent.text.strip())
 
     return claims
@@ -26,5 +31,5 @@ def process_news_report(file_path):
 
     print(f"Extracted {len(claims)} claims. Saved to claims.txt")
 
-# Example usage (Replace with actual file path)
+# Example usage
 process_news_report("news_report.txt")
